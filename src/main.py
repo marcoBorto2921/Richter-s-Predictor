@@ -1,5 +1,5 @@
 # src/main.py
-from data_utils import read_csv, display_data,encode_categorical
+from data_utils import read_csv, display_data,encode_categorical,full_eda_report
 from sklearn.model_selection import train_test_split
 
 
@@ -8,13 +8,16 @@ def main():
     X = read_csv("data/raw/train_values.csv")
 
     # Read labels
-    y = pd.read_csv("data/raw/train_labels.csv")
+    y = read_csv("data/raw/train_labels.csv")
     
     # Display data feature
     display_data(X)
 
     # Data feature to numerical data 
-    X = encode_categorical(df)
+    X = encode_categorical(X)
+    
+    # Statistical analysis
+    full_eda_report(X, y)
 
     # Split training and test
     X_train, X_test, y_train, y_test = train_test_split(

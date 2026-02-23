@@ -1,6 +1,8 @@
 # src/data_utils.py
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 def read_csv(file_path):
     """Reads a CSV file and returns a DataFrame"""
@@ -34,3 +36,63 @@ def encode_categorical(df, method='onehot'):
             le = LabelEncoder()
             df[col] = le.fit_transform(df[col])
     return df
+
+
+def full_eda_report(df, y):
+    """
+    Full exploratory data analysis report.
+    
+    Parameters:
+        df (pd.DataFrame): feature dataframe
+        y (pd.Series): target labels
+    """
+
+    print("\n==================== DATASET INFO ====================")
+    print(df.info())
+
+    print("\n==================== NUMERIC STATISTICS ====================")
+    print(df.describe())
+
+    print("\n==================== MISSING VALUES ====================")
+    missing = df.isnull().sum()
+    print(missing[missing > 0] if missing.sum() > 0 else "No missing values.")
+
+    # -------------------------
+    # LABEL DISTRIBUTION
+    # -------------------------
+    print("\n==================== LABEL DISTRIBUTION ====================")
+    print("Counts:")
+    print(y.value_counts())
+
+    print("\nPercentages:")
+    print((y.value_counts(normalize=True) * 100).round(2))
+
+    plt.figure(figsize=(6,4))
+    sns.countplot(x=y)
+    plt.title("Label Distribution")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+    # -------------------------
+    # NUMERIC DISTRIBUTIONS
+    # -------------------------
+    numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
+
+    for col in numeric_cols:
+        plt.figure(figsize=(6,4))
+        sns.histplot(df[col], kde=True)
+        plt.title(f"Distribution of {col}")
+        plt.tight_layout()
+        plt.show()
+
+    # -------------------------
+    # CORRELATION MATRIX
+    # -------------------------
+    if len(numeric_cols) > 1:
+        plt.figure(figsize=(10,8))
+        corr_matrix = df[numeric_cols].corr()
+        sns.heatmap(corr_matrix, cmap="coolwarm", annot=False)
+        plt.title("Correlation Matrix")
+        plt.tight_layout()
+        plt.show()
