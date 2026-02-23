@@ -43,7 +43,7 @@ def encode_categorical(df, method='onehot'):
             df[col] = le.fit_transform(df[col])
 
     # Save preprocessed features
-    X.to_csv("data/preprocessed/train_values_preprocessed.csv", index=False)
+    df.to_csv("data/preprocessed/train_values_preprocessed.csv", index=False)
     return df
 
 
@@ -89,6 +89,7 @@ def full_eda_report(df, y):
     # NUMERIC DISTRIBUTIONS
     # -------------------------
     numeric_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    numeric_cols = numeric_cols.drop('building_id')
 
     for col in numeric_cols:
         plt.figure(figsize=(6,4))
@@ -96,6 +97,8 @@ def full_eda_report(df, y):
         plt.title(f"Distribution of {col}")
         plt.tight_layout()
         plt.show()
+        plt.savefig(f"data/eda/{col}_distribution.png")
+        plt.close()
 
     # -------------------------
     # CORRELATION MATRIX
