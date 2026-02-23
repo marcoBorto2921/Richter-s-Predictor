@@ -8,10 +8,13 @@ def main():
     X = read_csv("data/raw/train_values.csv")
 
     # Read labels
-    y = read_csv("data/raw/train_labels.csv")
+    y = read_csv("data/raw/train_labels.csv")["damage_grade"]
     
     # Display data feature
     display_data(X)
+
+    # Display label 
+    display_data(y)
 
     # Data feature to numerical data 
     X = encode_categorical(X)

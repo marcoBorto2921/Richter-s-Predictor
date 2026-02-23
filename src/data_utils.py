@@ -3,19 +3,25 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os
 
 def read_csv(file_path):
     """Reads a CSV file and returns a DataFrame"""
     return pd.read_csv(file_path)
 
-def display_data(df, n=10):
-    """Prints the first n rows of the DataFrame in a readable way"""
-    print(f"Here are the first {n} rows of the data:")
-    print(df.head(n))  # stampa solo le prime n righe
-    
-    # Optionally print each row as a dictionary (first n rows)
-    for idx, row in df.head(n).iterrows():
-        print(f"Row {idx}: {row.to_dict()}")
+def display_data(data, n=10):
+    """Display first n rows of DataFrame or Series"""
+    print(f"\nHere are the first {n} rows:")
+
+    print(data.head(n))
+
+    if isinstance(data, pd.DataFrame):
+        for idx, row in data.head(n).iterrows():
+            print(f"Row {idx}: {row.to_dict()}")
+    else:  # Series
+        for idx, value in data.head(n).items():
+            print(f"Index {idx}: {value}")
+
 
 def encode_categorical(df, method='onehot'):
     """
@@ -35,6 +41,9 @@ def encode_categorical(df, method='onehot'):
         for col in categorical_cols:
             le = LabelEncoder()
             df[col] = le.fit_transform(df[col])
+
+    # Save preprocessed features
+    X.to_csv("data/preprocessed/train_values_preprocessed.csv", index=False)
     return df
 
 
@@ -73,6 +82,8 @@ def full_eda_report(df, y):
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.show()
+    plt.savefig("data/eda/label_distribution.png")
+    plt.close()
 
     # -------------------------
     # NUMERIC DISTRIBUTIONS
